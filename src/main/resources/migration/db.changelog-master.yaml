@@ -1,0 +1,5 @@
+databaseChangeLog:
+  - include:
+      file: migration/changelog/v1__create_table.sql
+  - include:
+      file: migration/changelog/v2__insert_into_tasks.sql
