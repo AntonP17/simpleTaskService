@@ -1,9 +1,13 @@
 package by.antohakon.testproject.test;
 
 import by.antohakon.testproject.entity.Task;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -11,43 +15,48 @@ public class Ktest {
 
     public static void main(String[] args) {
 
-        int[] oldArray = {1,2,3,4};
-        int[] newArray = reverse(oldArray);
-        System.out.println(Arrays.toString(newArray));
+
+        Runnable task1 = new Runnable() {
+            @SneakyThrows
+            public void run() {
+                test();
+            }
+        };
+
+        Runnable task2 = new Runnable() {
+            @SneakyThrows
+            public void run() {
+                test();
+            }
+        };
+
+        new Thread(task1).start();
+        new Thread(task2).start();
+
+
+        ExecutorService executorService = Executors.newFixedThreadPool(4);
+        CompletableFuture<String> completableFuture =
+                CompletableFuture.supplyAsync(() -> {
+                    return "hello from " + Thread.currentThread().getName();
+                }, executorService);
+        System.out.println(completableFuture.join());
+        executorService.shutdown();
 
     }
 
-    public static int[] reverse(int[] array) {
+    public static synchronized void test() throws InterruptedException {
+        int intik = 1;
+        System.out.println("Hello from " + Thread.currentThread().getName());
+        for (int i = 0; i < 10000; i++) {
+            intik++;
 
-        int left = 0, right = array.length - 1;
-
-        while (left < right) {
-
-            int temp = array[left];
-            array[left] = array[right];
-            array[right] = temp;
-
-            left++;
-            right--;
         }
-        return array;
+        System.out.println(intik);
     }
 
-    public static char[] reverse(char[] array) {
 
-        int left = 0, right = array.length - 1;
 
-        while (left < right) {
 
-            char temp = array[left];
-            array[left] = array[right];
-            array[right] = temp;
-
-            left++;
-            right--;
-        }
-        return array;
-    }
 
 }
 
