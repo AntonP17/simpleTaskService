@@ -1,23 +1,13 @@
 package by.antohakon.testproject.test;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
+import java.util.concurrent.*;
 
-public class Test2 {
+public class Test2 implements Runnable {
 
-    private int id;
-    private String name;
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Test2 test2 = (Test2) o;
-        return id == test2.id && Objects.equals(name, test2.name);
-    }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(id, name);
+    public void run() {
     }
 }

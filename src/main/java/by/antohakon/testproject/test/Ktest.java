@@ -1,19 +1,17 @@
 package by.antohakon.testproject.test;
 
-import by.antohakon.testproject.entity.Task;
+
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
 @Slf4j
 public class Ktest {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws ExecutionException, InterruptedException {
 
 
         Runnable task1 = new Runnable() {
@@ -37,16 +35,30 @@ public class Ktest {
         ExecutorService executorService = Executors.newFixedThreadPool(4);
         CompletableFuture<String> completableFuture =
                 CompletableFuture.supplyAsync(() -> {
-                    return "hello from " + Thread.currentThread().getName();
+                    return "completableFuture, thread = " + Thread.currentThread().getName();
                 }, executorService);
+
         System.out.println(completableFuture.join());
+
+        //executorService.shutdown();
+
+        Future<String> future = executorService.submit(new CallableThread());
+        System.out.println(future.get());
         executorService.shutdown();
+
+
+        CompletableFuture.supplyAsync(() -> "Hello")
+                .thenApply(s -> s + " World")
+                .thenAccept(result -> System.out.println(result));
+
+        Test2 test2 = new Test2();
+        test2.run();
 
     }
 
     public static synchronized void test() throws InterruptedException {
         int intik = 1;
-        System.out.println("Hello from " + Thread.currentThread().getName());
+        System.out.println("synschronized method test, thread = " + Thread.currentThread().getName());
         for (int i = 0; i < 10000; i++) {
             intik++;
 
@@ -55,7 +67,14 @@ public class Ktest {
     }
 
 
+public static class CallableThread implements Callable<String> {
 
+    @Override
+    public String call() throws Exception {
+        Thread.sleep(1000);
+        return "Callable thread class, thread = " + Thread.currentThread().getName();
+    }
+}
 
 
 }
