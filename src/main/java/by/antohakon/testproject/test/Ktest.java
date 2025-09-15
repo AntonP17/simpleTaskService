@@ -11,7 +11,11 @@ import java.util.stream.Collectors;
 @Slf4j
 public class Ktest {
 
+    private static Object object = new Object();
+
     public static void main(String[] args) throws ExecutionException, InterruptedException {
+
+
 
 
         Runnable task1 = new Runnable() {
@@ -43,7 +47,7 @@ public class Ktest {
         //executorService.shutdown();
 
         Future<String> future = executorService.submit(new CallableThread());
-        System.out.println(future.get());
+        System.out.println(future.get()); // блокирует основной поток так то
         executorService.shutdown();
 
 
@@ -54,16 +58,20 @@ public class Ktest {
         Test2 test2 = new Test2();
         test2.run();
 
+
+
     }
 
     public static synchronized void test() throws InterruptedException {
-        int intik = 1;
-        System.out.println("synschronized method test, thread = " + Thread.currentThread().getName());
-        for (int i = 0; i < 10000; i++) {
-            intik++;
 
+        synchronized (object) {
+            int intik = 1;
+            System.out.println("synschronized method test, thread = " + Thread.currentThread().getName());
+            for (int i = 0; i < 10000; i++) {
+                intik++;
+            }
+            System.out.println(intik);
         }
-        System.out.println(intik);
     }
 
 
