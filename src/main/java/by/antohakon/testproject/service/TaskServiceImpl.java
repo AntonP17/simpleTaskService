@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,6 +26,7 @@ public class TaskServiceImpl implements TaskService {
     private final TaskMapper taskMapper;
 
     @Override
+    @PreAuthorize("hasRole('ADMIN')")
     public Page<TaskDto> getTasks(Pageable pageable) {
 
         return taskRepository.findAll(pageable)
@@ -41,6 +43,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public TaskDto getTaskById(Long id) {
 
         Task findTask = taskRepository.findById(id)
@@ -57,6 +60,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
+    @PreAuthorize("hasRole('ADMIN') or hasAuthority('CREATE_TASKS')")
     public TaskDto createTask(CreateTaskDto task) {
 
         if (taskRepository.existsByTitle(task.title())){
@@ -72,6 +76,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
+    @PreAuthorize("hasRole('ADMIN')")
     public TaskDto updateTask(CreateTaskDto task, Long id) {
 
         Task findTaskById = taskRepository.findById(id)
@@ -86,6 +91,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
+    @PreAuthorize("hasRole('ADMIN')")
     public void deleteTaskById(Long id) {
 
         Task findTaskById = taskRepository.findById(id)
