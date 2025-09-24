@@ -1,4 +1,6 @@
 package by.antohakon.testproject.dto;
 
-public record RegistrationRequest(String username, String password, String role) {
+import by.antohakon.testproject.entity.Roles;
+
+public record RegistrationRequest(String username, String password, Roles role) {
 }

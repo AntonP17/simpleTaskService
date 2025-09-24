@@ -1,4 +1,4 @@
-package by.antohakon.testproject.config;
+package by.antohakon.testproject.controller;
 
 import by.antohakon.testproject.dto.RegistrationRequest;
 import by.antohakon.testproject.entity.User;
