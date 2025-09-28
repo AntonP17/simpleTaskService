@@ -19,17 +19,62 @@ public class JwtService {
 
     public static final String SECRET = "5367566859703373367639792F423F452848284D6251655468576D5A71347437";
 
-    public String generateToken(String userName) { // Use email as username
+    private static final long ACCESS_TOKEN_EXPIRATION = 1000 * 60 * 30; // 30 минут
+    private static final long REFRESH_TOKEN_EXPIRATION = 1000 * 60 * 60 * 24 * 7; // 7 дней
+    private static final String TOKEN_TYPE_CLAIM = "type";
+    private static final String TOKEN_TYPE_ACCESS = "ACCESS";
+    private static final String TOKEN_TYPE_REFRESH = "REFRESH";
+
+    public String generateAccessToken(String userName) {
         Map<String, Object> claims = new HashMap<>();
-        return createToken(claims, userName);
+        claims.put(TOKEN_TYPE_CLAIM, TOKEN_TYPE_ACCESS);
+        return createToken(claims, userName, ACCESS_TOKEN_EXPIRATION);
     }
 
-    private String createToken(Map<String, Object> claims, String userName) {
+    public String generateRefreshToken(String userName) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put(TOKEN_TYPE_CLAIM, TOKEN_TYPE_REFRESH);
+        return createToken(claims, userName, REFRESH_TOKEN_EXPIRATION);
+    }
+
+    public String generateToken(String userName) {
+        return generateAccessToken(userName);
+    }
+
+    public Boolean validateRefreshToken(String token) {
+        try {
+            if (isTokenExpired(token)) {
+                return false;
+            }
+
+            String tokenType = extractClaim(token, claims -> claims.get(TOKEN_TYPE_CLAIM, String.class));
+            return TOKEN_TYPE_REFRESH.equals(tokenType);
+
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public Boolean validateAccessToken(String token) {
+        try {
+            if (isTokenExpired(token)) {
+                return false;
+            }
+
+            String tokenType = extractClaim(token, claims -> claims.get(TOKEN_TYPE_CLAIM, String.class));
+            return TOKEN_TYPE_ACCESS.equals(tokenType);
+
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    private String createToken(Map<String, Object> claims, String userName, long expirationTime) {
         return Jwts.builder()
                 .setClaims(claims)
                 .setSubject(userName)
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 30))
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + expirationTime))
                 .signWith(getSignKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
@@ -66,6 +111,6 @@ public class JwtService {
 
     public Boolean validateToken(String token, UserDetails userDetails) {
         final String username = extractUsername(token);
-        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+        return (username.equals(userDetails.getUsername()) && validateAccessToken(token));
     }
 }
