@@ -20,7 +20,7 @@ public class AppConfig {
                         )
                 )
                 .info(
-                        new Info().title("Navigator address")
+                        new Info().title("Simple Task Service")
                 );
     }
 

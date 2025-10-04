@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Tag(name = "our_controller")
+@Tag(name = "task_controller")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("api/tasks")
