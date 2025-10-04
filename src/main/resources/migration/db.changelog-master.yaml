@@ -1,9 +1,3 @@
 databaseChangeLog:
   - include:
-      file: migration/changelog/v1__create_table.sql
-  - include:
-      file: migration/changelog/v2__insert_into_tasks.sql
-  - include:
-      file: migration/changelog/v3__create_tables_employes.sql
-  - include:
-      file: migration/changelog/v4__incerts_to_new_tables.sql
+      file: migration/changelog/v5__create_table.sql
